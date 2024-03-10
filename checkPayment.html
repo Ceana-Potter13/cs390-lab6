@@ -12,13 +12,13 @@
         <form  id="myForm" method="post">
             Check Name: <input type="text" id="checkName" name="checkName" class="form-control" required minlength="6">
             <br>
-            Date: <input type="date" id="date" name="date" class="form-control" required>
+            Date: <input type="date" id="date" name="date" class="form-control" required type="date(yyyy-mm-dd)">
             <br>
-            Amount: <input type="text" id="amount" name="amount" class="form-control" required>
+            Amount: <input type="text" id="amount" name="amount" class="form-control" required min=".01" type="number">
             <br>
             Bank Name: <input type="text" id="bankName" name="bankName" class="form-control" required minlength="5">
             <br>
-            Account Number: <input type="number" id="accountName" name="accountName" class="form-control" required minlength="10" maxlength="10">
+            Account Number: <input type="number" id="accountNumber" name="accountNumber" class="form-control" required minlength="10" maxlength="10">
             <br>
             <button type="submit" value="Submit" id="submitButton" class="btn btn-primary mb-3">Submit</button>
         </form> 
@@ -27,39 +27,63 @@
         const form = document.getElementById("myForm");
         /* Round id="amount" to 2 decimal places always */
         function roundAmount() {
+            
             let amt = Number(document.getElementById("amount").value);
+            if(amt <= 0) {
+                return false;
+            }
             document.getElementById("amount").value = amt.toFixed(2);
+            
+            return true;
         }        
         /* End round function */
 
         form.addEventListener("submit", (event) => {
             event.preventDefault();
+            if(!roundAmount()) {
+                alert("Amount Must be greater than zero");
+                return;
+            }
             roundAmount();
-            let checkDate = document.getElementById("date");
-            validateDate(checkDate);
-            makeRequest();
+            let checkDate = document.getElementById("date").value;
+            if(validateDate(checkDate)) {
+                makeRequest();
+            } else {
+                alert("Date is not in the future");
+            }
         });
 
-        function validateDate(date) {
-            let dateObj = new Date(date);
+        function validateDate(checkDate) {
+            let dateObj = new Date(checkDate);
+            let currentDate = new Date();
 
-
+            if(currentDate < dateObj) {
+                return true;
+            }
+            
+            return false;
         }
 
         function makeRequest() {
-            let frequency = document.getElementById("frequency");
+            let checkName = document.getElementById("checkName");
+            let date = document.getElementById("date");
+            let amount = document.getElementById("amount");
+            let bankName = document.getElementById("bankName");
+            let accountNumber = document.getElementById("accountNumber");
             let url = "https://macpro.csis410.com/submit"; // BASE_URL should be a predefined constant or variable
 
             // Create a new FormData object
             let params = new FormData();
-            params.append("sourceName", sourceName.value); // 'field' and 'value' should be replaced with actual field names and values
-            params.append("amount", amount.value);
-            params.append("frequency", frequency.value);
+            params.append("CheckName", checkName.value); // 'field' and 'value' should be replaced with actual field names and values
+            params.append("Date", date.value);
+            params.append("Amount", amount.value);
+            params.append("BankName", bankName.value);
+            params.append("AccountNumber", accountNumber.value);
+            
             // Fetch now with a method of POST and the param data in the body
             fetch(url, { method: "POST", body: params })
                 .then(statusCheck)
-                .then((response) => response.json()) // Convert the response to JSON
-                .then(response => response.text()) // for text data
+                .then((response) => response.text()) // Convert the response to JSON
                 .then((data) => updateResults(data)) // Handle the data from the response
                 .catch(handleError); // Handle any errors that occur
             }
@@ -67,7 +91,6 @@
             // These functions need to be defined elsewhere in your code
             function updateResults(data) {
                 console.log(data);
-                debugger
             }
 
             function handleError(error) {
