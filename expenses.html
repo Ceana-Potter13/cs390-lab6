@@ -10,35 +10,38 @@
     <main class="container">
         <h2>Expenses</h2>
         <form method="post">
-            Place of Expense: <input type="text" id="expensePlace" name="expensePlace" class="form-control">
+            Place of Expense: <input type="text" id="expensePlace" name="expensePlace" class="form-control" required minlength="5">
             <br>
             Expense Date: <input type="date" id="expenseDate" name="expenseDate" class="form-control">
             <br>
-            Expense Amount: <input type="number" id="expenseAmount" name="expenseAmount" class="form-control">
+            Expense Amount: <input type="number" id="expenseAmount" name="expenseAmount" class="form-control" min="0.01" step="0.01" max="49999.99">
             <br>
             Expense Category:
             <br>
             <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
                 <input type="checkbox" id="groceries" name="groceries" class="btn-check" autocomplete="off">
                 <label for="groceries" class="btn btn-outline-primary">Groceries</label>
+
                 <input type="checkbox" id="business" name="business" class="btn-check" autocomplete="off">
                 <label for="business" class="btn btn-outline-primary">Business</label>
+
                 <input type="checkbox" id="restaurants" name="restaurants" class="btn-check" autocomplete="off">
                 <label for="restaurants" class="btn btn-outline-primary">Restaurants</label>
+
                 <input type="checkbox" id="fun" name="fun" class="btn-check" autocomplete="off">
                 <label for="fun" class="btn btn-outline-primary">Fun</label>
               </div>
             <br>
             <br>
             Mode of Payment:
-            <select id="paymentMode" name="paymentMode" class="form-control">
+            <select id="paymentMode" name="paymentMode" class="form-control" required>
                 <option value="Credit Card">Credit Card</option>
                 <option value="Debit Card">Debit Card</option>
                 <option value="Cash">Cash</option>
             </select>
             <br>
             Rational:
-            <input type="textbox" style="height: 100px; width: 300px;" required maxlength="100" class="form-control">
+            <input type="textbox" style="height: 100px; width: 300px;" maxlength="100" class="form-control">
             <br>
             <button type="submit" value="Submit" id="submitButton" class="btn btn-primary mb-3">Submit</button>
         </form>
@@ -57,6 +60,10 @@
             number.toFixed()
         
         */
+
+        /* Set the maximum allowed date of expense to yesterday */
+       let today = new Date();
+       document.getElementById("expenseDate").setAttribute("max", today.getDate() - 1);
     </script>
     
 </body>
